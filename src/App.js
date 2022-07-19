@@ -13,7 +13,7 @@ import Grid from '@mui/material/Grid';
 import Dialog from '@mui/material/Dialog';
 import Slide from '@mui/material/Slide';
 import ListItemText from '@mui/material/ListItemText';
-import ListItem from '@mui/material/ListItem';
+// import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import List from '@mui/material/List';
 import Divider from '@mui/material/Divider';
@@ -22,10 +22,23 @@ import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
-import { PDFDownloadLink, Page, Text, View, Document, StyleSheet, PDFViewer } from 'react-pdf-browser';
+import { PDFDownloadLink, Page, Text, View, Document, StyleSheet, PDFViewer, Font } from '@react-pdf/renderer';
+import THSarabun from './fonts/THSarabun.ttf'
+import THSarabunBold from './fonts/THSarabunBold.ttf'
+import THSarabunBoldItalic from './fonts/THSarabunBoldItalic.ttf'
+import THSarabunItalic from './fonts/THSarabunItalic.ttf'
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
+});
+
+Font.register({
+  family: 'TH Sarabun PSK', fonts: [
+    { src: THSarabun },
+    { src: THSarabunBold, fontStyle: 'bold' },
+    { src: THSarabunItalic, fontStyle: 'italic' },
+    { src: THSarabunBoldItalic, fontStyle: 'italic', fontWeight: 700 }
+  ]
 });
 
 const styles = StyleSheet.create({
@@ -40,18 +53,102 @@ const styles = StyleSheet.create({
   }
 });
 
-const MyDocument = () => (
-  <Document>
-    <Page size="A4" style={styles.page}>
-      <View style={styles.section}>
+function MyDocument(props) {
+
+  return (
+
+    <Document>
+      <Page size="A4" style={styles.page}>
+        {/* <View style={styles.section}>
         <Text>Section #1</Text>
       </View>
       <View style={styles.section}>
         <Text>Section #2</Text>
-      </View>
-    </Page>
-  </Document>
-);
+      </View> */}
+        {props.data && props.data.map((step, index) => (<View key={index} >
+                    <View>
+                      {index === 0 && (
+                        <View key={index}>
+                          <Text style={{
+                            fontFamily: 'TH Sarabun PSK'
+                          }}>{step.name}</Text>
+                        </View>)}
+                    </View>
+                    <View>
+                      {index === 1 && (
+                        <View key={index}>
+                          <Text style={{
+                            fontFamily: 'TH Sarabun PSK'
+                          }}>{step.address}</Text>
+                        </View>)}
+                    </View>
+                    <View>
+                      {index === 2 && (<View key={index}>
+                        <Text style={{
+                          fontFamily: 'TH Sarabun PSK'
+                        }}>{step.phone}</Text>
+                      </View>)}
+                    </View>
+                    <View>
+                      {index === 3 && (
+                        <View>
+                          <Text style={{
+                            fontFamily: 'TH Sarabun PSK'
+                          }}>{step.fax}</Text>
+                        </View>)}
+                    </View>
+                    {index === 4 && (
+                      <View key={index}>
+                        <View>
+                          <Text style={{
+                            fontFamily: 'TH Sarabun PSK'
+                          }}>เรื่อง {step.subject}</Text>
+                        </View>
+                        <View key={index}>
+                          <Text style={{
+                            fontFamily: 'TH Sarabun PSK'
+                          }}>เรียน {step.from}</Text>
+                        </View>
+                        <View key={index}>
+                          <Text style={{
+                            fontFamily: 'TH Sarabun PSK'
+                          }}>วันที่ {step.date}</Text>
+                        </View>
+                        <View key={index}>{step.items.map((val, key, arr) => (
+                          <View key={key}>
+                            <View>
+                              <Text style={{
+                                fontFamily: 'TH Sarabun PSK'
+                              }}>ลำดับ {key}</Text>
+                            </View>
+                            <View>
+                              <Text style={{
+                                fontFamily: 'TH Sarabun PSK'
+                              }}>{val.name}</Text>
+                            </View>
+                            <View>
+                              <Text style={{
+                                fontFamily: 'TH Sarabun PSK'
+                              }}>ราคา: {val.price}</Text>
+                            </View>
+                            <View>
+                              <Text style={{
+                                fontFamily: 'TH Sarabun PSK'
+                              }}>จำนวน: {val.unit}</Text>
+                            </View>
+                            <View>
+                              <Text style={{
+                                fontFamily: 'TH Sarabun PSK'
+                              }}>จำนวนเงิน: {val.unit}</Text>
+                            </View>
+                          </View>
+                        ))}</View>
+                      </View>)}
+                  </View>))}
+      </Page>
+    </Document>
+  )
+};
 
 function App() {
   const [companyName, setCompanyName] = React.useState("บริษัทโตโยต้าลำปาง จำกัด");
@@ -68,7 +165,9 @@ function App() {
   const [companyBillItemUnite, setCompanyBillItemUnite] = React.useState("1");
   const [companyBillItemKey, setCompanyBillItemKey] = React.useState();
   const [companyBillSumItemPrice, setCompanyBillSumItemPrice] = React.useState();
-  const [companyBillVat, setCompanyBillVat] = React.useState(0);
+  const [companyBillVat
+    // , setCompanyBillVat
+  ] = React.useState(0);
   const [companyBillSumItemPriceAll, setCompanyBillSumItemPriceAll] = React.useState(0);
   const [steps, setStep] = React.useState([])
   const [activeStep, setActiveStep] = React.useState(0);
@@ -147,13 +246,14 @@ function App() {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  const handleReset = () => {
-    setActiveStep(0);
-  };
+  // const handleReset = () => {
+  //   setActiveStep(0);
+  // };
 
 
 
   React.useEffect(() => {
+    // eslint-disable-next-line array-callback-return
     companyBillItems.map((v, i, arr) => {
       let sum;
       sum += v.priceAll;
@@ -451,10 +551,104 @@ function App() {
         {activeStep === steps.length && (
           <Paper square elevation={0} sx={{ p: 3 }}>
             {/* <Typography>All steps completed - you&apos;re finished</Typography> */}
-            {/* <PDFViewer>
-            <MyDocument />
-            </PDFViewer> */}
-            <PDFDownloadLink document={<MyDocument />} fileName="somename.pdf">
+            <PDFViewer
+              showToolbar={false}
+              style={{
+                width: '100%',
+                height: '95%',
+              }}>
+              <Document>
+                <Page size="A4" style={styles.page}>
+                  {/* <View style={styles.section}>
+        <Text>Section #1</Text>
+      </View>
+      <View style={styles.section}>
+        <Text>Section #2</Text>
+      </View> */}
+                  {steps && steps.map((step, index) => (<View key={index} >
+                    <View>
+                      {index === 0 && (
+                        <View key={index}>
+                          <Text style={{
+                            fontFamily: 'TH Sarabun PSK'
+                          }}>{step.name}</Text>
+                        </View>)}
+                    </View>
+                    <View>
+                      {index === 1 && (
+                        <View key={index}>
+                          <Text style={{
+                            fontFamily: 'TH Sarabun PSK'
+                          }}>{step.address}</Text>
+                        </View>)}
+                    </View>
+                    <View>
+                      {index === 2 && (<View key={index}>
+                        <Text style={{
+                          fontFamily: 'TH Sarabun PSK'
+                        }}>{step.phone}</Text>
+                      </View>)}
+                    </View>
+                    <View>
+                      {index === 3 && (
+                        <View>
+                          <Text style={{
+                            fontFamily: 'TH Sarabun PSK'
+                          }}>{step.fax}</Text>
+                        </View>)}
+                    </View>
+                    {index === 4 && (
+                      <View key={index}>
+                        <View>
+                          <Text style={{
+                            fontFamily: 'TH Sarabun PSK'
+                          }}>เรื่อง {step.subject}</Text>
+                        </View>
+                        <View key={index}>
+                          <Text style={{
+                            fontFamily: 'TH Sarabun PSK'
+                          }}>เรียน {step.from}</Text>
+                        </View>
+                        <View key={index}>
+                          <Text style={{
+                            fontFamily: 'TH Sarabun PSK'
+                          }}>วันที่ {step.date}</Text>
+                        </View>
+                        <View key={index}>{step.items.map((val, key, arr) => (
+                          <View key={key}>
+                            <View>
+                              <Text style={{
+                                fontFamily: 'TH Sarabun PSK'
+                              }}>ลำดับ {key}</Text>
+                            </View>
+                            <View>
+                              <Text style={{
+                                fontFamily: 'TH Sarabun PSK'
+                              }}>{val.name}</Text>
+                            </View>
+                            <View>
+                              <Text style={{
+                                fontFamily: 'TH Sarabun PSK'
+                              }}>ราคา: {val.price}</Text>
+                            </View>
+                            <View>
+                              <Text style={{
+                                fontFamily: 'TH Sarabun PSK'
+                              }}>จำนวน: {val.unit}</Text>
+                            </View>
+                            <View>
+                              <Text style={{
+                                fontFamily: 'TH Sarabun PSK'
+                              }}>จำนวนเงิน: {val.unit}</Text>
+                            </View>
+                          </View>
+                        ))}</View>
+                      </View>)}
+                  </View>))}
+                </Page>
+              </Document>
+            </PDFViewer>
+            <PDFDownloadLink document={<MyDocument data={steps} />} fileName="somename.pdf">
               {({ blob, url, loading, error }) => (loading ? 'Loading document...' : 'Download now!')}
             </PDFDownloadLink>
 
